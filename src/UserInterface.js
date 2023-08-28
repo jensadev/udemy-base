@@ -12,7 +12,21 @@ export default class UserInterface {
         context.shadowOffsetX = 2;
         context.shadowOffsetY = 2;
         context.shadowColor = 'black';
+
+        // debug
+        if (this.game.debug) {
+            context.font = `15px Arial`;
+            context.textAlign = 'right';
+            context.fillText(`x: ${this.game.player.x}`, this.game.width -20, 25);
+            context.fillText(`y: ${this.game.player.y}`, this.game.width -20, 50);
+            context.fillText(`speedX: ${this.game.player.speedX}`, this.game.width -20, 75);
+            context.fillText(`speedY: ${this.game.player.speedY}`, this.game.width -20, 100);
+            context.fillText(`maxSpeed: ${this.game.player.maxSpeed}`, this.game.width -20, 125);
+            context.fillText(`keys: ${this.game.keys}`, this.game.width -20, 150);
+        }
+
         // score
+        context.textAlign = 'left';
         context.font = `${this.fontSize}px ${this.fontFamily}`;
         context.fillText(`Score: ${this.game.score}`, 20, 40);
 

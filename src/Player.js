@@ -22,6 +22,8 @@ export default class Player {
         this.frameWidth = 32;
         this.frameHeight = 32;
 
+        this.flip = false;
+
         this.fps = 20;
         this.animationTimer = 0;
         this.animationInterval = 1000 / this.fps;
@@ -45,6 +47,13 @@ export default class Player {
         }
         this.x += this.speedX;
         this.y += this.speedY;
+
+        // flip sprite direction
+        if (this.speedX < 0) {
+            this.flip = true;
+        } else if (this.speedX > 0) {
+            this.flip = false;
+        }
 
         // animation
         if (this.animationTimer > this.animationInterval) {
@@ -76,17 +85,24 @@ export default class Player {
             context.fillText(this.frameX, this.x, this.y - 5);
         }
 
+        if (this.flip) {
+            context.save();
+            context.scale(-1, 1);
+        }
+        
         context.drawImage(
             this.image,
             this.frameX * this.frameWidth,
             this.frameY * this.frameHeight,
             this.frameWidth,
             this.frameHeight,
-            this.x,
+            this.flip ? this.x * -1 - this.width : this.x,
             this.y,
             this.width,
             this.height);
-
+            
+        context.restore();
+            
         this.projectiles.forEach((projectile) => {
             projectile.draw(context);
         });

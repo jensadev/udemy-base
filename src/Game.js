@@ -22,7 +22,9 @@ export default class Game {
         this.score = 0;
         this.winningScore = 10;
         this.gameTime = 0;
-        this.timeLimit = 5000;
+        this.timeLimit = 50000;
+
+        this.debug = false;
     }
 
     update(deltaTime) {
@@ -82,9 +84,8 @@ export default class Game {
     }
 
     draw(context) {
-        context.clearRect(0, 0, this.width, this.height);
-        this.player.draw(context);
         this.ui.draw(context);
+        this.player.draw(context);
         this.enemies.forEach(enemy => {
             enemy.draw(context);
         });
