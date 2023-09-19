@@ -130,9 +130,9 @@ export default class Player {
     }
   }
 
-  onPlatformCollision(platform) {
+  onPlatformCollision(platform, direction) {
     this.y = platform.y - this.height;
-    this.grounded = true;
+    this.grounded = direction;
     this.speedY = 0;
   }
 }

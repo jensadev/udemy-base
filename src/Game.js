@@ -35,7 +35,7 @@ export default class Game {
   }
 
   update(deltaTime) {
-    console.log('update');
+    // console.log('update');
     if (!this.gameOver) {
       this.gameTime += deltaTime;
     }
@@ -47,8 +47,8 @@ export default class Game {
       const collisionDirection = this.checkCollision(this.player, platform);
       if (collisionDirection) {
         console.log(collisionDirection);
-        this.player.onPlatformCollision(platform);
-        return; // stop iteration on collision
+        this.player.onPlatformCollision(platform, collisionDirection);
+        return;
       }
     });
 
