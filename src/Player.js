@@ -28,18 +28,16 @@ export default class Player {
     this.animationTimer = 0;
     this.animationInterval = 1000 / this.fps;
 
-    this.gravity = 2;
+    this.gravity = 1;
     this.grounded = false;
-    this.jumpHeight = -40;
+    this.jumpHeight = 15;
   }
 
   update(deltaTime) {
     // key direction
-    if (this.game.keys.includes('ArrowUp')) {
-      if (this.grounded) {
-        this.grounded = false;
-        this.speedY += this.jumpHeight;
-      }
+    if (this.game.keys.includes('ArrowUp') && this.grounded) {
+      this.grounded = false;
+      this.speedY -= this.jumpHeight;
     }
     if (this.game.keys.includes('ArrowLeft')) {
       this.speedX = -this.maxSpeed;
@@ -50,8 +48,10 @@ export default class Player {
     }
     // gravity
     if (!this.grounded) {
-      console.log(this.speedY, this.gravity);
+      // console.log(this.grounded, this.speedY);
       this.speedY += this.gravity;
+    } else {
+      this.speedY = 0;
     }
 
     this.x += this.speedX;
@@ -130,14 +130,9 @@ export default class Player {
     }
   }
 
-  onGroundCollision() {
-    this.grounded = true;
-    this.speedY = 0;
-  }
-
   onPlatformCollision(platform) {
+    this.y = platform.y - this.height;
     this.grounded = true;
     this.speedY = 0;
-    this.y = platform.y - this.height;
   }
 }

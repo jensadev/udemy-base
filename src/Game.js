@@ -35,6 +35,7 @@ export default class Game {
   }
 
   update(deltaTime) {
+    console.log('update');
     if (!this.gameOver) {
       this.gameTime += deltaTime;
     }
@@ -44,9 +45,10 @@ export default class Game {
 
     this.platforms.forEach((platform) => {
       const collisionDirection = this.checkCollision(this.player, platform);
-      console.log(collisionDirection);
-      if (collisionDirection === 'bottom') {
+      if (collisionDirection) {
+        console.log(collisionDirection);
         this.player.onPlatformCollision(platform);
+        return; // stop iteration on collision
       }
     });
 
@@ -117,6 +119,15 @@ export default class Game {
     this.platforms.push(platform);
   }
 
+  //   checkCollision(object1, object2) {
+  //     return (
+  //       object1.x < object2.x + object2.width &&
+  //       object1.x + object1.width > object2.x &&
+  //       object1.y < object2.y + object2.height &&
+  //       object1.height + object1.y > object2.y
+  //     );
+  //   }
+
   checkCollision(object1, object2) {
     const dx = object1.x + object1.width / 2 - (object2.x + object2.width / 2);
     const dy =
@@ -130,43 +141,12 @@ export default class Game {
 
     if (Math.abs(dx) <= width && Math.abs(dy) <= height) {
       if (crossWidth > crossHeight) {
-        collisionDirection = crossWidth > -crossHeight ? 'top' : 'right';
+        collisionDirection = crossWidth > -crossHeight ? 'bottom' : 'left';
       } else {
-        collisionDirection = crossWidth > -crossHeight ? 'left' : 'bottom';
+        collisionDirection = crossWidth > -crossHeight ? 'right' : 'top';
       }
     }
 
     return collisionDirection;
   }
-
-  //   checkCollision(object1, object2) {
-  //     return (
-  //       object1.x < object2.x + object2.width &&
-  //       object1.x + object1.width > object2.x &&
-  //       object1.y < object2.y + object2.height &&
-  //       object1.height + object1.y > object2.y
-  //     );
-  //   }
-
-  //   checkCollision(object1, object2) {
-  //     const dx = object1.x + object1.width / 2 - (object2.x + object2.width / 2);
-  //     const dy =
-  //       object1.y + object1.height / 2 - (object2.y + object2.height / 2);
-  //     const width = (object1.width + object2.width) / 2;
-  //     const height = (object1.height + object2.height) / 2;
-  //     const crossWidth = width * dy;
-  //     const crossHeight = height * dx;
-
-  //     let collisionDirection = null;
-
-  //     if (Math.abs(dx) <= width && Math.abs(dy) <= height) {
-  //       if (crossWidth > crossHeight) {
-  //         collisionDirection = crossWidth > -crossHeight ? 'bottom' : 'left';
-  //       } else {
-  //         collisionDirection = crossWidth > -crossHeight ? 'right' : 'top';
-  //       }
-  //     }
-
-  //     return collisionDirection;
-  //   }
 }
