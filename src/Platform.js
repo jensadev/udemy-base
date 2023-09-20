@@ -1,5 +1,6 @@
 export default class Platform {
-  constructor(x, y, width, height, color) {
+  constructor(game, x, y, width, height, color) {
+    this.game = game;
     this.width = width;
     this.height = height;
     this.x = x;
@@ -10,6 +11,10 @@ export default class Platform {
   update(deltaTime) {}
 
   draw(context) {
+    if (this.game.debug) {
+      context.strokeRect(this.x, this.y, this.width, this.height);
+      context.fillStyle = 'black';
+    }
     context.fillStyle = this.color;
     context.fillRect(this.x, this.y, this.width, this.height);
   }

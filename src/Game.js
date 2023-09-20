@@ -2,7 +2,7 @@ import Player from './Player.js';
 import InputHandler from './InputHandler.js';
 import UserInterface from './UserInterface.js';
 import Slime from './Slime.js';
-import Platform from './Platform.js';
+import Map from './Map.js';
 
 export default class Game {
   constructor(width, height) {
@@ -13,7 +13,7 @@ export default class Game {
     this.ui = new UserInterface(this);
     this.keys = [];
     this.enemies = [];
-    this.platforms = [];
+    this.map = new Map(this);
     this.enemyTimer = 0;
     this.enemyInterval = 1000;
     this.ammo = 20;
@@ -28,10 +28,7 @@ export default class Game {
 
     this.debug = false;
 
-    this.addPlatform(
-      new Platform(0, this.height - 80, this.width, 120, '#905520')
-    );
-    this.addPlatform(new Platform(200, 300, 200, 20, '#905520'));
+    this.collided = false;
   }
 
   update(deltaTime) {
@@ -43,14 +40,21 @@ export default class Game {
       this.gameOver = true;
     }
 
-    this.platforms.forEach((platform) => {
-      const collisionDirection = this.checkCollision(this.player, platform);
-      if (collisionDirection) {
-        console.log(collisionDirection);
-        this.player.onPlatformCollision(platform, collisionDirection);
-        return;
+    this.map.platforms.forEach((platform) => {
+      if (this.player.x + this.player.width > platform.x && this.player.x < platform.x + platform.width) {
+        if (this.checkCollisionDown(this.player, platform)) {
+         this.player.onPlatformCollision(platform)
+         this.collided = true;
+         return
+        }
       }
     });
+
+    if (!this.collided) {
+      this.player.grounded = false;
+    }
+
+    this.collided = false;
 
     this.player.update(deltaTime);
     if (this.ammoTimer > this.ammoInterval) {
@@ -102,9 +106,7 @@ export default class Game {
 
   draw(context) {
     this.ui.draw(context);
-    this.platforms.forEach((platform) => {
-      platform.draw(context);
-    });
+    this.map.draw(context);
     this.player.draw(context);
     this.enemies.forEach((enemy) => {
       enemy.draw(context);
@@ -115,38 +117,41 @@ export default class Game {
     this.enemies.push(new Slime(this));
   }
 
-  addPlatform(platform) {
-    this.platforms.push(platform);
-  }
 
-  //   checkCollision(object1, object2) {
-  //     return (
-  //       object1.x < object2.x + object2.width &&
-  //       object1.x + object1.width > object2.x &&
-  //       object1.y < object2.y + object2.height &&
-  //       object1.height + object1.y > object2.y
-  //     );
-  //   }
-
-  checkCollision(object1, object2) {
-    const dx = object1.x + object1.width / 2 - (object2.x + object2.width / 2);
-    const dy =
-      object1.y + object1.height / 2 - (object2.y + object2.height / 2);
-    const width = (object1.width + object2.width) / 2;
-    const height = (object1.height + object2.height) / 2;
-    const crossWidth = width * dy;
-    const crossHeight = height * dx;
-
-    let collisionDirection = null;
-
-    if (Math.abs(dx) <= width && Math.abs(dy) <= height) {
-      if (crossWidth > crossHeight) {
-        collisionDirection = crossWidth > -crossHeight ? 'bottom' : 'left';
-      } else {
-        collisionDirection = crossWidth > -crossHeight ? 'right' : 'top';
-      }
+    checkCollision(object1, object2) {
+      return (
+        object1.x < object2.x + object2.width &&
+        object1.x + object1.width > object2.x &&
+        object1.y < object2.y + object2.height &&
+        object1.height + object1.y > object2.y
+      )
     }
 
-    return collisionDirection;
-  }
+    checkCollisionDown (player, platform) {
+      return (
+        player.y + player.height >= platform.y &&
+        player.y + player.height <= platform.y + platform.height)
+    }
+
+  // checkCollision(object1, object2) {
+  //   const dx = object1.x + object1.width / 2 - (object2.x + object2.width / 2);
+  //   const dy =
+  //     object1.y + object1.height / 2 - (object2.y + object2.height / 2);
+  //   const width = (object1.width + object2.width) / 2;
+  //   const height = (object1.height + object2.height) / 2;
+  //   const crossWidth = width * dy;
+  //   const crossHeight = height * dx;
+
+  //   let collisionDirection = null;
+
+  //   if (Math.abs(dx) <= width && Math.abs(dy) <= height) {
+  //     if (crossWidth > crossHeight) {
+  //       collisionDirection = crossWidth > -crossHeight ? 'bottom' : 'left';
+  //     } else {
+  //       collisionDirection = crossWidth > -crossHeight ? 'right' : 'top';
+  //     }
+  //   }
+
+  //   return collisionDirection;
+  // }
 }
